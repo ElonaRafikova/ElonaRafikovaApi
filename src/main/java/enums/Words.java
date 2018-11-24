@@ -16,7 +16,7 @@ public enum Words{
     TEXT_WITH_REPEATS2("to","go to to"),
     LOWER_LONDON("London","london"),
     UPPER_BROTHER("brother","broTher");
-    
+
     private String corrVer;
     private String wrongVer;
 
