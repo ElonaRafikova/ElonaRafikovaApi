@@ -7,7 +7,10 @@ import java.util.List;
 import static enums.Language.*;
 import static enums.Options.*;
 import static enums.Words.*;
-import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.testng.Assert.assertTrue;
+
 
 public class SimpleYandexSpellerApiTest {
 
@@ -18,11 +21,17 @@ public class SimpleYandexSpellerApiTest {
         answers = YandexSpellerApi.getYandexSpellerAnswers(
                 YandexSpellerApi
                         .with()
-                        .texts(RU_BYCYCLE.wrongVer(), RU_HELLO.wrongVer())
+                        .texts(RU_BICYCLE.wrongVer(), RU_HELLO.wrongVer())
                         .language(RU)
                         .callApiTexts());
-        assertTrue(answers.get(0).get(0).s.contains(RU_BYCYCLE.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(RU_HELLO.corrVer()));
+
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0),not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(RU_BICYCLE.corrVer()));
+
+        assertThat(answers.get(1),not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(RU_HELLO.corrVer()));
     }
 
     @Test
@@ -33,8 +42,14 @@ public class SimpleYandexSpellerApiTest {
                         .texts(BROTHER.wrongVer(), MOTHER.wrongVer())
                         .language(EN)
                         .callApiTexts());
-        assertTrue(answers.get(0).get(0).s.contains(BROTHER.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(MOTHER.corrVer()));
+
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0),not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(BROTHER.corrVer()));
+
+        assertThat(answers.get(1),not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(MOTHER.corrVer()));
     }
 
     @Test
@@ -44,8 +59,14 @@ public class SimpleYandexSpellerApiTest {
                         texts(UK_BOY.wrongVer(), UK_GIRL.wrongVer())
                         .language(UK)
                         .callApiTexts());
-        assertTrue(answers.get(0).get(0).s.contains(UK_BOY.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(UK_GIRL.corrVer()));
+
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0),not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(UK_BOY.corrVer()));
+
+        assertThat(answers.get(1),not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(UK_GIRL.corrVer()));
 
         //should fail as default "ru,en" but passed
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -53,8 +74,13 @@ public class SimpleYandexSpellerApiTest {
                         .with()
                         .texts(UK_BOY.wrongVer(), UK_GIRL.wrongVer())
                         .callApiTexts());
-        assertTrue(answers.get(0).get(0).s.contains(UK_BOY.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(UK_GIRL.corrVer()));
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0),not(empty()));
+        assertThat(answers.get(0).get(0).s, not(hasItem(UK_BOY.corrVer())));
+
+        assertThat(answers.get(1),not(empty()));
+        assertThat(answers.get(1).get(0).s, not(hasItem(UK_GIRL.corrVer())));
     }
 
     @Test
@@ -67,8 +93,13 @@ public class SimpleYandexSpellerApiTest {
                         .texts(WORD_WITH_DIGITS_END.wrongVer(), WORD_WITH_DIGITS_MIDDLE.wrongVer())
                         .language(EN)
                         .callApiTexts());
-        assertTrue(answers.get(0).get(0).s.contains(WORD_WITH_DIGITS_END.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(WORD_WITH_DIGITS_MIDDLE.corrVer()));
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0),not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(WORD_WITH_DIGITS_END.corrVer()));
+
+        assertThat(answers.get(1),not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_DIGITS_MIDDLE.corrVer()));
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -78,8 +109,9 @@ public class SimpleYandexSpellerApiTest {
                         .language(EN)
                         .options(IGNORE_DIGITS.code)
                         .callApiTexts());
-        assertTrue(answers.get(0).isEmpty());
-        assertTrue(answers.get(1).isEmpty());
+        assertThat(answers,hasSize(2));
+        assertThat(answers.get(0), empty());
+        assertThat(answers.get(1), empty());
     }
 
     @Test
@@ -94,9 +126,16 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed because response is empty
-        assertTrue(answers.get(0).get(0).s.contains(WORD_WITH_URL.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(WORD_WITH_EMAIL.corrVer()));
-        assertTrue(answers.get(2).get(0).s.contains(WORD_WITH_FILE.corrVer()));
+        assertThat(answers,hasSize(3));
+
+        assertThat(answers.get(0), not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(WORD_WITH_URL.corrVer()));
+
+        assertThat(answers.get(1), not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_EMAIL.corrVer()));
+
+        assertThat(answers.get(2), not(empty()));
+        assertThat(answers.get(2).get(0).s, hasItem(WORD_WITH_FILE.corrVer()));
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -107,9 +146,10 @@ public class SimpleYandexSpellerApiTest {
                         .options(IGNORE_URLS.code)
                         .callApiTexts());
         //passed but not because option is on
-        assertTrue(answers.get(0).isEmpty());
-        assertTrue(answers.get(1).isEmpty());
-        assertTrue(answers.get(2).isEmpty());
+        assertThat(answers,hasSize(3));
+        assertThat(answers.get(0), empty());
+        assertThat(answers.get(1), empty());
+        assertThat(answers.get(2), empty());
     }
 
     @Test
@@ -122,8 +162,9 @@ public class SimpleYandexSpellerApiTest {
                         .texts(TEXT_WITH_REPEATS.wrongVer(), TEXT_WITH_NO_REPEATS.wrongVer())
                         .language(EN)
                         .callApiTexts());
-        assertTrue(answers.get(0).isEmpty());
-        assertTrue(answers.get(1).isEmpty());
+        assertThat(answers,hasSize(2));
+        assertThat(answers.get(0), empty());
+        assertThat(answers.get(1), empty());
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -135,7 +176,12 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed , response empty
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0), not(empty()));
         assertTrue(answers.get(0).get(0).s.contains(TEXT_WITH_REPEATS.corrVer()));
+
+        assertThat(answers.get(1),empty());
     }
 
     @Test
@@ -150,8 +196,13 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed empty response
-        assertTrue(answers.get(0).get(0).s.contains(LOWER_LONDON.corrVer()));
-        assertTrue(answers.get(1).get(0).s.contains(UPPER_BROTHER.corrVer()));
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0), not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(LOWER_LONDON.corrVer()));
+
+        assertThat(answers.get(1), not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(UPPER_BROTHER.corrVer()));
 
         //with options
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -163,8 +214,9 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //passed but not because option is on
-        assertTrue(answers.get(0).isEmpty());
-        assertTrue(answers.get(1).isEmpty());
+        assertThat(answers,hasSize(2));
+        assertThat(answers.get(0), empty());
+        assertThat(answers.get(1), empty());
     }
 
     @Test
@@ -174,31 +226,39 @@ public class SimpleYandexSpellerApiTest {
         answers = YandexSpellerApi.getYandexSpellerAnswers(
                 YandexSpellerApi
                         .with()
-                        .texts(UPPER_BROTHER.wrongVer() + " " + WORD_WITH_DIGITS_MIDDLE.wrongVer())
+                        .texts(UPPER_BROTHER.wrongVer(), WORD_WITH_DIGITS_MIDDLE.wrongVer())
                         .language(EN)
                         .callApiTexts());
 
         //failed, only WORD_WITH_DIGITS_MIDDLE.corrVer() in response
-        assertTrue(answers.get(0).get(0).s.contains(UPPER_BROTHER.corrVer()));
-        assertTrue(answers.get(0).get(1).s.contains(WORD_WITH_DIGITS_MIDDLE.corrVer()));
+        assertThat(answers,hasSize(2));
+
+        assertThat(answers.get(0), not(empty()));
+        assertThat(answers.get(0).get(0).s, hasItem(UPPER_BROTHER.corrVer()));
+
+        assertThat(answers.get(1), not(empty()));
+        assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_DIGITS_MIDDLE.corrVer()));
+
 
         //with options
         String options = sum(IGNORE_DIGITS, IGNORE_CAPITALIZATION);
         answers = YandexSpellerApi.getYandexSpellerAnswers(
                 YandexSpellerApi
                         .with()
-                        .texts(UPPER_BROTHER.wrongVer() + " " + WORD_WITH_DIGITS_MIDDLE.wrongVer())
+                        .texts(UPPER_BROTHER.wrongVer() ,WORD_WITH_DIGITS_MIDDLE.wrongVer())
                         .language(EN)
                         .options(options)
                         .callApiTexts());
-        assertTrue(answers.get(0).isEmpty());
+        assertThat(answers,hasSize(2));
+        assertThat(answers.get(0), empty());
+        assertThat(answers.get(1), empty());
     }
 
     /* notes
-    * 1) strange behaviour with uk language , work as it default but in documentation : "ru,en"
-    * 2) do not work with urls,files, emails, option can be tested properly, because response both with option
-    *    and without it is empty
-    * 3) same situation with capitalization
-    * 4) and repeats
-    */
+     * 1) strange behaviour with uk language , work as it default but in documentation : "ru,en"
+     * 2) do not work with urls,files, emails, option can be tested properly, because response both with option
+     *    and without it is empty
+     * 3) same situation with capitalization
+     * 4) and repeats
+     */
 }
