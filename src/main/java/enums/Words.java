@@ -4,7 +4,7 @@ public enum Words{
     MOTHER("mother", "mottherr"),
     BROTHER("brother", "bbrother"),
     RU_HELLO("здравствуйте","здраствуйте"),
-    RU_BYCYCLE("велосипед","велосепед"),
+    RU_BICYCLE("велосипед","велосепед"),
     UK_BOY("хлопець","хлопец"),
     UK_GIRL("дівчина","дівчена"),
     WORD_WITH_DIGITS_END("5 days","next 5days"),
