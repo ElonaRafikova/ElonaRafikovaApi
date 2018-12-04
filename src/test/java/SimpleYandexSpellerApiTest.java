@@ -6,13 +6,14 @@ import java.util.List;
 
 import static enums.Language.*;
 import static enums.Options.*;
+import static enums.Reasons.*;
 import static enums.Words.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.testng.Assert.assertTrue;
 
 
 public class SimpleYandexSpellerApiTest {
+
 
     private static List<List<YandexSpellerAnswer>> answers;
 
@@ -25,13 +26,13 @@ public class SimpleYandexSpellerApiTest {
                         .language(RU)
                         .callApiTexts());
 
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0),not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(RU_BICYCLE.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(RU_BICYCLE.corrVer()));
 
-        assertThat(answers.get(1),not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(RU_HELLO.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(RU_HELLO.corrVer()));
     }
 
     @Test
@@ -43,13 +44,13 @@ public class SimpleYandexSpellerApiTest {
                         .language(EN)
                         .callApiTexts());
 
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0),not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(BROTHER.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(BROTHER.corrVer()));
 
-        assertThat(answers.get(1),not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(MOTHER.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(MOTHER.corrVer()));
     }
 
     @Test
@@ -60,27 +61,27 @@ public class SimpleYandexSpellerApiTest {
                         .language(UK)
                         .callApiTexts());
 
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0),not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(UK_BOY.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(UK_BOY.corrVer()));
 
-        assertThat(answers.get(1),not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(UK_GIRL.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(UK_GIRL.corrVer()));
 
-        //should fail as default "ru,en" but passed
+        //should not contain correct word abecause default is {en,ru}
         answers = YandexSpellerApi.getYandexSpellerAnswers(
                 YandexSpellerApi
                         .with()
                         .texts(UK_BOY.wrongVer(), UK_GIRL.wrongVer())
                         .callApiTexts());
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0),not(empty()));
-        assertThat(answers.get(0).get(0).s, not(hasItem(UK_BOY.corrVer())));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(CORRECT_WORD.text(), answers.get(0).get(0).s, not(hasItem(UK_BOY.corrVer())));
 
-        assertThat(answers.get(1),not(empty()));
-        assertThat(answers.get(1).get(0).s, not(hasItem(UK_GIRL.corrVer())));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(CORRECT_WORD.text(), answers.get(1).get(0).s, not(hasItem(UK_GIRL.corrVer())));
     }
 
     @Test
@@ -93,13 +94,13 @@ public class SimpleYandexSpellerApiTest {
                         .texts(WORD_WITH_DIGITS_END.wrongVer(), WORD_WITH_DIGITS_MIDDLE.wrongVer())
                         .language(EN)
                         .callApiTexts());
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0),not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(WORD_WITH_DIGITS_END.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(WORD_WITH_DIGITS_END.corrVer()));
 
-        assertThat(answers.get(1),not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_DIGITS_MIDDLE.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(WORD_WITH_DIGITS_MIDDLE.corrVer()));
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -109,9 +110,9 @@ public class SimpleYandexSpellerApiTest {
                         .language(EN)
                         .options(IGNORE_DIGITS.code)
                         .callApiTexts());
-        assertThat(answers,hasSize(2));
-        assertThat(answers.get(0), empty());
-        assertThat(answers.get(1), empty());
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
+        assertThat(NOT_EMPTY.text(), answers.get(0), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
     }
 
     @Test
@@ -126,16 +127,16 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed because response is empty
-        assertThat(answers,hasSize(3));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(3));
 
-        assertThat(answers.get(0), not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(WORD_WITH_URL.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(WORD_WITH_URL.corrVer()));
 
-        assertThat(answers.get(1), not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_EMAIL.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(WORD_WITH_EMAIL.corrVer()));
 
-        assertThat(answers.get(2), not(empty()));
-        assertThat(answers.get(2).get(0).s, hasItem(WORD_WITH_FILE.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(2), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(2).get(0).s, hasItem(WORD_WITH_FILE.corrVer()));
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -146,10 +147,10 @@ public class SimpleYandexSpellerApiTest {
                         .options(IGNORE_URLS.code)
                         .callApiTexts());
         //passed but not because option is on
-        assertThat(answers,hasSize(3));
-        assertThat(answers.get(0), empty());
-        assertThat(answers.get(1), empty());
-        assertThat(answers.get(2), empty());
+        assertThat(WRONG_SIZE.text(), answers, hasSize(3));
+        assertThat(NOT_EMPTY.text(), answers.get(0), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(2), empty());
     }
 
     @Test
@@ -162,9 +163,9 @@ public class SimpleYandexSpellerApiTest {
                         .texts(TEXT_WITH_REPEATS.wrongVer(), TEXT_WITH_NO_REPEATS.wrongVer())
                         .language(EN)
                         .callApiTexts());
-        assertThat(answers,hasSize(2));
-        assertThat(answers.get(0), empty());
-        assertThat(answers.get(1), empty());
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
+        assertThat(NOT_EMPTY.text(), answers.get(0), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
 
         //with option
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -176,12 +177,12 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed , response empty
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0), not(empty()));
-        assertTrue(answers.get(0).get(0).s.contains(TEXT_WITH_REPEATS.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(TEXT_WITH_REPEATS.corrVer()));
 
-        assertThat(answers.get(1),empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
     }
 
     @Test
@@ -196,13 +197,13 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed empty response
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0), not(empty()));
-        assertThat(answers.get(0).get(0).s, hasItem(LOWER_LONDON.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(0).get(0).s, hasItem(LOWER_LONDON.corrVer()));
 
-        assertThat(answers.get(1), not(empty()));
-        assertThat(answers.get(1).get(0).s, hasItem(UPPER_BROTHER.corrVer()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
+        assertThat(NO_CORRECT_WORD.text(), answers.get(1).get(0).s, hasItem(UPPER_BROTHER.corrVer()));
 
         //with options
         answers = YandexSpellerApi.getYandexSpellerAnswers(
@@ -214,9 +215,9 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //passed but not because option is on
-        assertThat(answers,hasSize(2));
-        assertThat(answers.get(0), empty());
-        assertThat(answers.get(1), empty());
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
+        assertThat(NOT_EMPTY.text(), answers.get(0), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
     }
 
     @Test
@@ -231,12 +232,12 @@ public class SimpleYandexSpellerApiTest {
                         .callApiTexts());
 
         //failed, only WORD_WITH_DIGITS_MIDDLE.corrVer() in response
-        assertThat(answers,hasSize(2));
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
 
-        assertThat(answers.get(0), not(empty()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(0), not(empty()));
         assertThat(answers.get(0).get(0).s, hasItem(UPPER_BROTHER.corrVer()));
 
-        assertThat(answers.get(1), not(empty()));
+        assertThat(EMPTY_ANSWER.text(), answers.get(1), not(empty()));
         assertThat(answers.get(1).get(0).s, hasItem(WORD_WITH_DIGITS_MIDDLE.corrVer()));
 
 
@@ -245,13 +246,13 @@ public class SimpleYandexSpellerApiTest {
         answers = YandexSpellerApi.getYandexSpellerAnswers(
                 YandexSpellerApi
                         .with()
-                        .texts(UPPER_BROTHER.wrongVer() ,WORD_WITH_DIGITS_MIDDLE.wrongVer())
+                        .texts(UPPER_BROTHER.wrongVer(), WORD_WITH_DIGITS_MIDDLE.wrongVer())
                         .language(EN)
                         .options(options)
                         .callApiTexts());
-        assertThat(answers,hasSize(2));
-        assertThat(answers.get(0), empty());
-        assertThat(answers.get(1), empty());
+        assertThat(WRONG_SIZE.text(), answers, hasSize(2));
+        assertThat(NOT_EMPTY.text(), answers.get(0), empty());
+        assertThat(NOT_EMPTY.text(), answers.get(1), empty());
     }
 
     /* notes
